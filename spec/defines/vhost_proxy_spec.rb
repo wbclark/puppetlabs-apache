@@ -24,7 +24,7 @@ describe 'apache::vhost::proxy' do
         end
 
         context 'with proxy_dest' do
-          let(:params) { super().merge(proxy_pass: {'path' => '/', 'url' => 'http://localhost:8080/'}) }
+          let(:params) { super().merge( proxy_pass: [{ path: '/', url: 'http://localhost:8080/' }] )}
 
           it 'creates a concat fragment' do
             is_expected.to compile.with_all_deps
@@ -35,7 +35,10 @@ describe 'apache::vhost::proxy' do
               .with_content(<<CONTENT
 
   ## Proxy rules
-  ProxyPass / http://localhost:8000/
+  ProxyRequests Off
+  ProxyPreserveHost Off
+  ProxyPass / http://localhost:8080/
+  ProxyPassReverse / http://localhost:8080/
 CONTENT
               )
           end
